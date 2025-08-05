@@ -28,7 +28,7 @@ const bootstrap = async () => {
     app.use('/user', userController)
     
    
-    app.all('*', (req, res, next) => res.status(404).json({
+    app.all('{/*dummy}', (req, res, next) => res.status(404).json({
         success: false,
         message: "Route not found"
     }))

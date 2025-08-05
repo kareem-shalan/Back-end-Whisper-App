@@ -9,6 +9,6 @@ router.get("/", authenticationMiddleware(), userService.getUser)
 router.get("/refresh-token", authenticationMiddleware({tokenType:tokenType.refresh}), userService.newUserCredentials) 
 
 
-router.put("/password", authenticationMiddleware, userService.updateUserPassword)
+router.put("/password", authenticationMiddleware(), userService.updateUserPassword)
 
 export default router
