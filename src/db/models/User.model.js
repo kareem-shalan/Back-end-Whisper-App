@@ -27,7 +27,10 @@ const userSchema = new mongoose.Schema({
             message: "Invalid email address"
         }
     },
-    confirmEmail: Date,
+    confirmEmail: {
+        type: Date,
+        default: null
+    },
     password: {
         type: String,
         required: function(){
@@ -46,12 +49,7 @@ const userSchema = new mongoose.Schema({
     },
     phone: {
         type: String,
-        required: function(){
-            return this.provider === provider.system ? true : false
-        },
-        unique: true,
-        minlength: [11, "Phone must be at least 11 characters"],
-
+        required: true,
     },
     provider: {
         type: String, 
@@ -61,8 +59,24 @@ const userSchema = new mongoose.Schema({
             default: provider.system
         }
     },
-    picture: String,
+    confirmEmailOtp: String,
+    picture: {public_id:String, secure_url:String},
     confirmPhone: Date,
+    confirmForgotPasswordOtp: String,
+    oldPasswords: [String],
+    changeCredintialsTime : Date,
+    coverImages: {public_id:String, secure_url:String},
+    devices: [{
+        deviceId: String,
+        deviceName: String,
+        deviceType: String,
+        deviceOs: String,
+        deviceVersion: String,
+    }],
+    otpUserCount: {
+        type: Number,
+        default: 0
+    },
     role: {
         type: String,
         enum: {
@@ -78,8 +92,29 @@ const userSchema = new mongoose.Schema({
     updatedAt: {
         type: Date,
         default: Date.now
+    },
+    isFreeze: {
+        type: Boolean,
+        default: false
+    },
+    deletedAt: {
+        type: Date,
+        default: null
+    },
+    deletedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        default: null
+    },
+    restoreAt: {
+        type: Date,
+        default: null
+    },
+    restoreBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',    
+        default: null
     }
-
 }, {
     timestamps: true,
     toObject: { virtuals: true },
@@ -92,6 +127,14 @@ userSchema.virtual('fullName').set(function (value) {
 }).get(function () {
     return `${this.firstName} ${this.lastName}`
 })
+
+
+userSchema.virtual('messages', {
+    ref: 'Message',
+    localField: '_id',
+    foreignField: 'receiver'
+})
+userSchema.index({firstName: 1 , lastName: 1} , {name: "fullName_index" , unique: true})        
 
 const UserModel = mongoose.models.User || mongoose.model('User', userSchema)
 

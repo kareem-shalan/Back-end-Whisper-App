@@ -295,7 +295,7 @@ export const emailTemplate = (userName = "User", message = "Welcome to Saraha Ap
 };
 
 // Welcome Email Template
-export const welcomeEmailTemplate = (userName) => {
+export const welcomeEmailTemplate = (userName , OTP) => {
     return emailTemplate(
         userName,
         `
@@ -391,7 +391,7 @@ export const verificationEmailTemplate = (userName, verificationLink) => {
                 <h2 style="color: #2c3e50; margin-bottom: 20px;">Hello ${userName}!</h2>
                 
                 <p style="font-size: 16px; color: #555; margin-bottom: 30px;">
-                    Thank you for signing up with Saraha App! To complete your registration and 
+                    Thank you for signing up with whisper app 📩! To complete your registration and 
                     start using all our amazing features, please verify your email address by 
                     clicking the button below.
                 </p>
@@ -407,12 +407,12 @@ export const verificationEmailTemplate = (userName, verificationLink) => {
                 
                 <div style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 8px; padding: 20px; margin: 30px 0;">
                     <p style="color: #856404; font-size: 14px; margin: 0;">
-                        ⏰ <strong>Important:</strong> This verification link will expire in 24 hours for security reasons.
+                        ⏰ <strong>Important:</strong> This verification link will  in 24 hours for security reasons.
                     </p>
                 </div>
                 
                 <p style="font-size: 12px; color: #95a5a6; margin-top: 20px;">
-                    If you didn't create an account with Saraha App, please ignore this email.
+                    If you didn't create an account with whisper app 📩, please ignore this email.
                 </p>
             </div>
         </div>
@@ -496,7 +496,7 @@ export const passwordResetEmailTemplate = (userName, resetLink) => {
                 <h2 style="color: #2c3e50; margin-bottom: 20px;">Hello ${userName}!</h2>
                 
                 <p style="font-size: 16px; color: #555; margin-bottom: 30px;">
-                    We received a request to reset your password for your Saraha App account. 
+                    We received a request to reset your password for your whisper app 📩 account. 
                     If you made this request, click the button below to create a new password.
                 </p>
                 

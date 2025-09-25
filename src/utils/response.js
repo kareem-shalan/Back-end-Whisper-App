@@ -1,8 +1,16 @@
 export const asyncHandler = (fn) => {
     return async (req, res, next) => {
+
+
+
         return await fn(req, res, next).catch((error) => {
             return next(error, { cause: 500 })
         })
+
+
+
+
+        
     }
 }
 

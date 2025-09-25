@@ -1,11 +1,12 @@
 import nodemailer from "nodemailer";
 
+
 export async function sendEmail({
     from=process.env.APP_EMAIL,
     to=[],
     cc=[],
     bcc=[],
-    subject="Saraha_App📩",
+    subject="Whisper_App📩",
     text="",
     html = "",
     attachments=[],
@@ -25,7 +26,7 @@ export async function sendEmail({
 
 
     const info = await transporter.sendMail({
-        from: `"Saraha_App📩" <${from}>`,
+        from: `"Whisper_App📩" <${from}>`,
       to,
        subject,
         text, // plain‑text body
@@ -36,7 +37,7 @@ export async function sendEmail({
     
     });
 
-    console.log("Message sent:", info.messageId);
+    console.log("Message sent:", info.accepted);
 
 }
 
