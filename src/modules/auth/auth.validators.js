@@ -20,7 +20,8 @@ export const forgotPasswordSchema = {
         email: joi.string().email().required().messages({
             "string.empty": "Email is required",
             "any.required": "Email is required",
-            "string.email": "Invalid email address"
+            "string.email": "Invalid email address" 
+            
         }),
     })
 }

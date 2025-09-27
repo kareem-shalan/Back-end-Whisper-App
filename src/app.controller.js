@@ -11,7 +11,8 @@ import path from 'node:path';
 import morgan from 'morgan'
 import helmet from 'helmet'
 import { deleteExpiredTokens } from './utils/cron/cron.js'
-import { rateLimit } from 'express-rate-limit'
+import { ipKeyGenerator, rateLimit } from 'express-rate-limit'
+import MongoStore from 'rate-limit-mongo/lib/mongoStore.js'
 
 
 
@@ -20,16 +21,39 @@ const bootstrap = async () => {
 
     const limiter = rateLimit(
         {
-            windowMs: 10 * 60 * 1000,//
+            windowMs: 10 * 60 * 1000,
             limit: 100,
 
             message: {
                 success: false,
-                message: "Too many requests, please try again later"
-
+                message: "Too many requests, please try again later try again in 10 minutes"
             }
             ,
             standardHeaders: "draft-8"
+            ,
+            skipFailedRequests: true,
+            keyGenerator: (req) => {
+                const ip = ipKeyGenerator(req.ip)
+                return `${ip}-${req.path}`
+
+
+            },
+            handler: (req, res, next , options) => {
+                res.status(429).json({
+                    success: false,
+                    message: "Too many requests, please try again later try again in 10 minutes",
+                    remainingTime: options.remainingTime
+
+                })
+            },
+            store: new MongoStore(
+                {
+                    uri: process.env.DB_URI,
+                    collectionName: "rateLimit",
+                    expires: 10 * 60 * 1000
+                }
+            )
+
         }
     )
     // create express app
@@ -37,6 +61,7 @@ const bootstrap = async () => {
     const port = process.env.PORT || 8080
     // app.use(express.static('public'))
     app.use(cors())
+    
     app.use(helmet())
     app.use(morgan('dev'))
     // connect to db
@@ -44,6 +69,7 @@ const bootstrap = async () => {
 
     // delete expired tokens
     const task = await deleteExpiredTokens()
+    // rate limit
     app.use(limiter)
 
     // create a route
