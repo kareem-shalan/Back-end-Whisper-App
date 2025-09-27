@@ -68,8 +68,8 @@ export const login = asyncHandler(async (req, res, next) => {
 
 
     if (!await DBService.findOne({ model: UserModel, filter: { email } })) {
-        return next(new Error("User not found", { cause: 404 })) 
-        
+        return next(new Error("User not found", { cause: 404 }))
+
     }
 
 
@@ -81,12 +81,20 @@ export const login = asyncHandler(async (req, res, next) => {
         filter: { email },
 
     })
-    if( user.deletedAt !== null) {
+    if (user.deletedAt !== null) {
         return next(new Error("User is deleted", { cause: 404 }))
     }
 
-    if (!user.confirmEmailOtp , user.confirmEmailOtp === null) {
+    if (!user.confirmEmailOtp, user.confirmEmailOtp === null) {
         return next(new Error("Email not verified", { cause: 400 }))
+    }
+  
+    if (user.changeCredintialsTime) {
+        await DBService.updateOne({
+            model: UserModel,
+            filter: { _id: user._id },
+            data: { $unset: { changeCredintialsTime: 1 } }
+        });
     }
 
 
@@ -106,7 +114,7 @@ export const login = asyncHandler(async (req, res, next) => {
     if (deviceId) {
         // Check if device already exists
         const existingDeviceIndex = user.devices.findIndex(device => device.deviceId === deviceId)
-        
+
         if (existingDeviceIndex !== -1) {
             // Update existing device info
             user.devices[existingDeviceIndex] = {
@@ -122,9 +130,9 @@ export const login = asyncHandler(async (req, res, next) => {
             // New device - check if user has reached the 2-device limit
             if (user.devices.length >= 2) {
                 return next(new Error("You have reached the maximum number of devices", { cause: 400 }))
-                
+
             }
-            
+
             // Add new device
             user.devices.push({
                 deviceId,
@@ -135,7 +143,7 @@ export const login = asyncHandler(async (req, res, next) => {
             })
         }
     }
-    
+
 
     const newCredentials = await generateNewCredentials({ user })
     await user.save()
@@ -153,7 +161,7 @@ export const confirmEmail = asyncHandler(async (req, res, next) => {
     });
 
 
-    if (!user || !user.confirmEmailOtp , user.confirmEmailOtp === null) {
+    if (!user || !user.confirmEmailOtp, user.confirmEmailOtp === null) {
         return next(new Error("User not found", { cause: 404 }));
     }
 
@@ -163,7 +171,7 @@ export const confirmEmail = asyncHandler(async (req, res, next) => {
     }
 
 
-        const isValid = await compareHash({ plaintext: otp, hashedText: user.confirmEmailOtp });
+    const isValid = await compareHash({ plaintext: otp, hashedText: user.confirmEmailOtp });
 
     if (!isValid) {
         const newCount = (user.otpUserCount || 0) + 1;
@@ -187,7 +195,7 @@ export const confirmEmail = asyncHandler(async (req, res, next) => {
         model: UserModel,
         filter: { email },
         data: {
-            confirmEmailOtp : Date.now(),
+            confirmEmailOtp: Date.now(),
             otpUserCount: null,
             otpBlockedUntil: null,
             $inc: { __v: 1 }
@@ -252,7 +260,7 @@ export const signupWithGoogle = asyncHandler(
                 if (deviceId) {
                     // Check if device already exists
                     const existingDeviceIndex = user.devices.findIndex(device => device.deviceId === deviceId)
-                    
+
                     if (existingDeviceIndex !== -1) {
                         // Update existing device info
                         user.devices[existingDeviceIndex] = {
@@ -268,7 +276,7 @@ export const signupWithGoogle = asyncHandler(
                             // Remove the oldest device (first in array) and add new one
                             user.devices.shift()
                         }
-                        
+
                         // Add new device
                         user.devices.push({
                             deviceId,
@@ -278,7 +286,7 @@ export const signupWithGoogle = asyncHandler(
                             deviceVersion
                         })
                     }
-                    
+
                     await user.save()
                 }
 
@@ -338,7 +346,7 @@ export const loginWithGoogle = asyncHandler(
         if (deviceId) {
             // Check if device already exists
             const existingDeviceIndex = user.devices.findIndex(device => device.deviceId === deviceId)
-            
+
             if (existingDeviceIndex !== -1) {
                 // Update existing device info
                 user.devices[existingDeviceIndex] = {
@@ -354,7 +362,7 @@ export const loginWithGoogle = asyncHandler(
                     // Remove the oldest device (first in array) and add new one
                     user.devices.shift()
                 }
-                
+
                 // Add new device
                 user.devices.push({
                     deviceId,
@@ -364,7 +372,7 @@ export const loginWithGoogle = asyncHandler(
                     deviceVersion
                 })
             }
-            
+
             await user.save()
         }
 
@@ -381,7 +389,7 @@ export const loginWithGoogle = asyncHandler(
 export const forgotPassword = asyncHandler(
     async (req, res, next) => {
         const { email } = req.body
-        const otp =  customAlphabet('0123456789', 6)()
+        const otp = customAlphabet('0123456789', 6)()
 
         const user = await DBService.findOneAndUpdate({
             model: UserModel,
@@ -406,7 +414,7 @@ export const forgotPassword = asyncHandler(
 )
 export const verifyForgotPassword = asyncHandler(
     async (req, res, next) => {
-        
+
         const { email, otp } = req.body
 
 
@@ -415,13 +423,13 @@ export const verifyForgotPassword = asyncHandler(
             filter: {
                 email,
                 confirmEmailOtp: { $exists: true },
-                
+
                 confirmForgotPasswordOtp: { $exists: true }
             },
 
         })
-    
-       
+
+
 
         if (!user) {
             return next(new Error("User not found", { cause: 404 }))
@@ -449,12 +457,12 @@ export const verifyForgotPassword = asyncHandler(
 export const resetForgotPassword = asyncHandler(
 
     async (req, res, next) => {
-        
+
         const { email, password, confirmPassword, otp } = req.body
         if (password !== confirmPassword) {
             return next(new Error("Password and confirm password do not match", { cause: 400 }))
         }
-      
+
         const user = await DBService.findOne({
             model: UserModel,
             filter: { email, confirmEmail: { $exists: true }, confirmForgotPasswordOtp: { $exists: true } },
@@ -462,13 +470,13 @@ export const resetForgotPassword = asyncHandler(
         if (!user) {
             return next(new Error("User not found", { cause: 404 }))
         }
-      
+
         const updateUser = await DBService.updateOne({
             model: UserModel,
             filter: { email },
             data: { password: await generateHash({ plaintext: password, saltRound: process.env.SALT_ROUND }) },
             $inc: { __v: 1 }
         })
-                return successHandler({ res, message: "Password verified successfully", status: 200, data: { updateUser }, success: true })
+        return successHandler({ res, message: "Password verified successfully", status: 200, data: { updateUser }, success: true })
     }
 )

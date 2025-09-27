@@ -29,7 +29,7 @@ const bootstrap = async () => {
 
     // delete expired tokens
     const task = await deleteExpiredTokens()
-    console.log({ task })
+   
 
     // create a route
     app.use("/uploads", express.static(path.resolve("./src/uploads")))

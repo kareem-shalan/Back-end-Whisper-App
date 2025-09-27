@@ -47,7 +47,7 @@ export const logout = asyncHandler(async (req, res, next) => {
         case logoutEnum.signoutFromAll:
             await DBService.updateOne({
                 model: UserModel,
-                filter: { _id: req.decoded._id },
+                filter: { _id: req.decoded.id },
                 data: { changeCredintialsTime: expirationTime }
             })
 

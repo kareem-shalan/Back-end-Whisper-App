@@ -119,11 +119,13 @@ export const decodedToken = async ({ next, authorization = "", tokenType: type =
         console.log(user , "user");
         
         
-        if (user?.changeCredintialsTime?.getTime() > decoded.iat * 1000 * 60)   {
+        if (user?.changeCredintialsTime?.getTime() > decoded.iat )   {
             next(new Error("Token is expired", { cause: 401 }));
+            
             return;
         }
-        console.log(user.changeCredintialsTime?.getTime(), decoded.iat * 1000 * 60, "user.changeCredintialsTime?.getTime() > decoded.iat * 1000")
+
+        console.log(user.changeCredintialsTime?.getTime(), decoded.iat, "user.changeCredintialsTime?.getTime() > decoded.iat * 1000")
 
         return { user, decoded }
 
@@ -194,7 +196,7 @@ export const revokeTokenForAll = async ({req} = {}) => {
         model: BlackListModel,
         data: {
             jti: req.decoded.jti,
-            userId: req.decoded._id,
+            userId: req.decoded.id,
             expireAt: new Date(Date.now() + (Number(process.env.JWT_REVOKE_EXPIRES_IN || 31536000) * 1000)), 
         },
        return: true
