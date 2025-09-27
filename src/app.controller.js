@@ -11,12 +11,27 @@ import path from 'node:path';
 import morgan from 'morgan'
 import helmet from 'helmet'
 import { deleteExpiredTokens } from './utils/cron/cron.js'
-
+import { rateLimit } from 'express-rate-limit'
 
 
 
 
 const bootstrap = async () => {
+
+    const limiter = rateLimit(
+        {
+            windowMs: 10 * 60 * 1000,//
+            limit: 100,
+
+            message: {
+                success: false,
+                message: "Too many requests, please try again later"
+
+            }
+            ,
+            standardHeaders: "draft-8"
+        }
+    )
     // create express app
     const app = express()
     const port = process.env.PORT || 8080
@@ -29,7 +44,7 @@ const bootstrap = async () => {
 
     // delete expired tokens
     const task = await deleteExpiredTokens()
-   
+    app.use(limiter)
 
     // create a route
     app.use("/uploads", express.static(path.resolve("./src/uploads")))
