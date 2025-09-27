@@ -96,7 +96,7 @@ export const updateUser = asyncHandler(async (req, res, next) => {
 export const uploadProfileImage = asyncHandler(
     async (req, res, next) => {
         
-console.log({req} , "req.file");
+
 
         const { public_id, secure_url } = await uploadToCloudinary(
             {

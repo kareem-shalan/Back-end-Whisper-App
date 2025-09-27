@@ -3,7 +3,7 @@ import path from "node:path"
 import * as dotenv from "dotenv"
 
 
-dotenv.config({ path: path.join("./src/config/.env.dev") })
+dotenv.config({ path: path.join("./src/config/.env.production") })
 
 
 
