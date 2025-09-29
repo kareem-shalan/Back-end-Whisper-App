@@ -11,7 +11,7 @@
 **A robust, secure, and scalable messaging application backend built with Node.js and Express**
 
 [![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
-[![Author](https://img.shields.io/badge/Author-Kareem%20Shalan-green.svg)](https://github.com/kareemshalan)
+[![Author](https://img.shields.io/badge/Author-Kareem%20Shalan-green.svg)](https://www.linkedin.com/in/kareem-shalan)
 
 </div>
 
