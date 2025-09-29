@@ -440,8 +440,8 @@ This project is licensed under the ISC License - see the [LICENSE](LICENSE) file
 ## 👨‍💻 Author
 
 **Kareem Shalan**
-- GitHub: [@kareemshalan](https://github.com/kareemshalan)
-- Email: alikemo547@gmail.com
+- GitHub: [@kareemshalan](https://github.com/kareem-shalan)
+- Email: kareemmohamed330@gmail.com
 
 ---
 
