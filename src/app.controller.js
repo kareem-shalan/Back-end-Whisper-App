@@ -75,7 +75,7 @@ const bootstrap = async () => {
     // create a route
     app.use("/uploads", express.static(path.resolve("./src/uploads")))
     app.use(express.json())
-    app.get('/', (req, res, next) => res.send('Hello World!'))
+    app.get('/', (req, res, next) => res.send(' Sraha App Backend API is Running 🚀 '))
     app.use('/auth', authController)
     app.use('/user', userController)
 
