@@ -6,8 +6,7 @@ yarn-error.log*
 pnpm-debug.log*
 
 #env
-config/
-src/config/
+
 
 
 # Environment variables
@@ -60,6 +59,7 @@ public/uploads/
 # Cache
 .cache/
 .parcel-cache/
+saraha_Private.pem
 
 # Package manager locks (keep one based on what you use)
 # package-lock.json  # Keep this if using npm
